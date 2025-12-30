@@ -35,7 +35,7 @@ dependencies {
     implementation("org.everbuild.blocksandstuff:blocksandstuff-fluids:1.9.0-SNAPSHOT")
 
     // minestompvp
-    implementation("io.github.togar2:MinestomPvP:2025.12.19-1.21.10")
+    implementation("io.github.togar2:MinestomPvP:2025.12.29-1.21.11")
 }
 
 // build task only outputs shadow jar
