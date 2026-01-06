@@ -22,7 +22,7 @@ dependencies {
 
     implementation("org.spigotmc:spigot-api:1.21.11-R0.1-SNAPSHOT")
 
-    implementation("net.minestom:minestom:2025.10.31-1.21.10")
+    implementation("net.minestom:minestom:2026.01.01-1.21.11")
 
     // the maven repo for this doesnt work atm, so build from source (https://github.com/LooFifteen/spark/commits/feat/minestom/) and publish to maven local
     implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT")
