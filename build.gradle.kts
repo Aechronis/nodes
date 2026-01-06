@@ -25,7 +25,7 @@ dependencies {
     implementation("net.minestom:minestom:2025.10.31-1.21.10")
 
     // the maven repo for this doesnt work atm, so build from source (https://github.com/LooFifteen/spark/commits/feat/minestom/) and publish to maven local
-    implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT")
+    implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT-everbuild")
 
     implementation("org.slf4j:slf4j-simple:2.0.17")
 
