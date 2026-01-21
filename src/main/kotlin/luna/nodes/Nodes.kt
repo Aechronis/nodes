@@ -39,7 +39,7 @@ import luna.nodes.constants.ErrorPlayerHasNation
 import luna.nodes.constants.ErrorPlayerHasTown
 import luna.nodes.constants.ErrorPlayerNotInTown
 import luna.nodes.constants.ErrorPortExists
-//import luna.nodes.constants.ErrorPortInGroup
+import luna.nodes.constants.ErrorPortInGroup
 import luna.nodes.constants.ErrorTerritoryHasClaim
 import luna.nodes.constants.ErrorTerritoryIsTownHome
 import luna.nodes.constants.ErrorTerritoryNotConnected
@@ -2498,19 +2498,19 @@ fun captureTerritory(town: Town, territory: Territory) {
         return port
     }
 
-//    public fun destroyPort(port: Port) {
-//        // remove from ports map
-//        Nodes.ports.remove(port.name)
-//
-//        // remove chunk mappings
-//        val chunk = listOf(Math.floorDiv(port.locX, 16), Math.floorDiv(port.locZ, 16))
-//        chunkToPort.remove(chunk)
-//
-//        Nodes.needsSave = true
-//    }
-//
-//    public fun getPortFromName(name: String): Port? = ports.get(name)
-//
+    public fun destroyPort(port: Port) {
+        // remove from ports map
+        Nodes.ports.remove(port.name)
+
+        // remove chunk mappings
+        val chunk = listOf(Math.floorDiv(port.locX, 16), Math.floorDiv(port.locZ, 16))
+        chunkToPort.remove(chunk)
+
+        Nodes.needsSave = true
+    }
+
+    public fun getPortFromName(name: String): Port? = ports.get(name)
+
 fun getPortGroupFromName(name: String): PortGroup? = portGroups.get(name)
 
     // load port group from data
@@ -2533,65 +2533,65 @@ fun getPortGroupFromName(name: String): PortGroup? = portGroups.get(name)
         return Result.success(portGroup)
     }
 
-//    public fun destroyPortGroup(portGroup: PortGroup) {
-//        // remove from portGroups map
-//        Nodes.portGroups.remove(portGroup.name)
-//
-//        Nodes.needsSave = true
-//    }
-//
-//    public fun createPort(
-//        name: String,
-//        locX: Int,
-//        locZ: Int,
-//        groups: HashSet<PortGroup>,
-//        isPublic: Boolean,
-//    ): Result<Port> {
-//        // check if port already exists
-//        if (ports.containsKey(name)) {
-//            return Result.failure(ErrorPortExists)
-//        }
-//
-//        val port = Port(name, locX, locZ, groups, isPublic)
-//
-//        // save new port
-//        ports.put(name, port)
-//
-//        // for each port, map the chunk its in to it
-//        val chunk = listOf(locX.floorDiv(16), locZ.floorDiv(16))
-//        chunkToPort.put(chunk, port)
-//
-//        // mark dirty
-//        port.needsUpdate()
-//        needsSave = true
-//
-//        return Result.success(port)
-//    }
-//
-//    public fun addPortToGroup(port: Port, group: PortGroup): Result<Port> {
-//        // check port is not already in this group
-//        if (port.groups.contains(group)) {
-//            return Result.failure(ErrorPortInGroup)
-//        }
-//
-//        port.groups.add(group)
-//        port.needsUpdate()
-//        Nodes.needsSave = true
-//
-//        return Result.success(port)
-//    }
-//
-//    public fun removePortFromGroup(port: Port, group: PortGroup) {
-//        // check port is in group
-//        if (!port.groups.contains(group)) {
-//            return
-//        }
-//
-//        port.groups.remove(group)
-//        port.needsUpdate()
-//        Nodes.needsSave = true
-//    }
-//
+    public fun destroyPortGroup(portGroup: PortGroup) {
+        // remove from portGroups map
+        Nodes.portGroups.remove(portGroup.name)
+
+        Nodes.needsSave = true
+    }
+
+    public fun createPort(
+        name: String,
+        locX: Int,
+        locZ: Int,
+        groups: HashSet<PortGroup>,
+        isPublic: Boolean,
+    ): Result<Port> {
+        // check if port already exists
+        if (ports.containsKey(name)) {
+            return Result.failure(ErrorPortExists)
+        }
+
+        val port = Port(name, locX, locZ, groups, isPublic)
+
+        // save new port
+        ports.put(name, port)
+
+        // for each port, map the chunk its in to it
+        val chunk = listOf(locX.floorDiv(16), locZ.floorDiv(16))
+        chunkToPort.put(chunk, port)
+
+        // mark dirty
+        port.needsUpdate()
+        needsSave = true
+
+        return Result.success(port)
+    }
+
+    public fun addPortToGroup(port: Port, group: PortGroup): Result<Port> {
+        // check port is not already in this group
+        if (port.groups.contains(group)) {
+            return Result.failure(ErrorPortInGroup)
+        }
+
+        port.groups.add(group)
+        port.needsUpdate()
+        Nodes.needsSave = true
+
+        return Result.success(port)
+    }
+
+    public fun removePortFromGroup(port: Port, group: PortGroup) {
+        // check port is in group
+        if (!port.groups.contains(group)) {
+            return
+        }
+
+        port.groups.remove(group)
+        port.needsUpdate()
+        Nodes.needsSave = true
+    }
+
 //    /**
 //     * Get port owner based on who owns chunk
 //     * If no owner or if port is public, return null
