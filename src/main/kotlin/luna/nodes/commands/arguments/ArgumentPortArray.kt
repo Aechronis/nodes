@@ -17,7 +17,7 @@ object ArgumentPortArray {
             val input = suggestion.input.substringAfterLast(" ").lowercase()
 
             Nodes.ports.values
-                .filter { it.name.startsWith(input) }
+                .filter { it.name.lowercase().startsWith(input) }
                 .forEach { port ->
                     suggestion.addEntry(SuggestionEntry(port.name))
                 }
