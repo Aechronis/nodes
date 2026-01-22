@@ -590,11 +590,16 @@ class NodesAdminNationAddTownCommand() : Command("addtown") {
         val townsArg = ArgumentTownArray.create("town-names")
 
         addSyntax( {player, resident, context ->
+            // Validate all towns first
             for (town in context[townsArg]) {
                 if (town.nation != null) {
-                    Message.error(player, "${town.name} already has a nation")
+                    Message.error(player, "Town \"${town.name}\" already has a nation")
                     return@addSyntax
                 }
+            }
+
+            // Process all towns if validation passed
+            for (town in context[townsArg]) {
                 Nodes.addTownToNation(context[nationArg], town)
                 Message.print(player, "Added town \"${town.name}\" to nation \"${context[nationArg].name}\"")
             }
@@ -612,11 +617,16 @@ class NodesAdminNationRemoveTownCommand() : Command("removetown") {
         val townsArg = ArgumentTownArray.create("town-names")
 
         addSyntax( {player, resident, context ->
+            // Validate all towns first
             for (town in context[townsArg]) {
                 if (town.nation != context[nationArg]) {
-                    Message.error(player, "${town.name} does not belong to nation")
+                    Message.error(player, "Town \"${town.name}\" does not belong to nation \"${context[nationArg].name}\"")
                     return@addSyntax
                 }
+            }
+
+            // Process all towns if validation passed
+            for (town in context[townsArg]) {
                 Nodes.removeTownFromNation(context[nationArg], town)
                 Message.print(player, "Removed town \"${town.name}\" from nation \"${context[nationArg].name}\"")
             }
@@ -833,7 +843,9 @@ class NodesAdminPortGroupCreateCommand() : Command("create") {
             })
 
             for (port in context[portsArg]) {
-                Nodes.addPortToGroup(port, portGroup)
+                Nodes.addPortToGroup(port, portGroup).getOrElse({ err ->
+                    Message.error(player, "Failed to add port \"${port.name}\": ${err.message}")
+                })
             }
 
             Message.print(player, "Created group \"${context[portGroupArg]}\" with ${context[portsArg].size} ports")
@@ -868,7 +880,10 @@ class NodesAdminPortGroupAddPortCommand() : Command("addport") {
 
         addSyntax( { player, resident, context ->
             for (port in context[portsArg]) {
-                Nodes.addPortToGroup(port, context[portGroupArg])
+                Nodes.addPortToGroup(port, context[portGroupArg]).getOrElse({ err ->
+                    Message.error(player, "Failed to add port \"${port.name}\": ${err.message}")
+                    return@addSyntax
+                })
                 Message.print(player, "Added port \"${port.name}\" to group \"${context[portGroupArg].name}\"")
             }
         }, portGroupArg, portsArg)
