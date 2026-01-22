@@ -27,6 +27,7 @@ import luna.nodes.utils.ChatColor
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.adventure.audience.Audiences
+import net.minestom.server.command.builder.arguments.ArgumentType
 
 class NodesAdminCommand : Command("nodesadmin", "nda") {
     init{
@@ -37,13 +38,9 @@ class NodesAdminCommand : Command("nodesadmin", "nda") {
             Message.print(sender, "/nodesadmin nation${ChatColor.WHITE}: Manage nations (see \"/nodesadmin nation help\")")
             Message.print(sender, "/nodesadmin port${ChatColor.WHITE}: Manage ports (see \"/nodesadmin port help\")")
             Message.print(sender, "/nodesadmin portgroup${ChatColor.WHITE}: Manage port groups (see \"/nodesadmin portgroup help\")")
-            Message.print(sender, "/nodesadmin enemy${ChatColor.WHITE}: Make two towns/nations enemies")
-            Message.print(sender, "/nodesadmin ally${ChatColor.WHITE}: Sets alliance between two towns/nations")
-            Message.print(sender, "/nodesadmin allyremove${ChatColor.WHITE}: Removes alliance between two towns/nations")
             Message.print(sender, "/nodesadmin save${ChatColor.WHITE}: Force save world")
             Message.print(sender, "/nodesadmin load${ChatColor.WHITE}: Force load world")
             Message.print(sender, "/nodesadmin runincome${ChatColor.WHITE}: Runs income for all towns")
-            Message.print(sender, "/nodesadmin debug${ChatColor.WHITE}: World object debugger")
         }
 
         addSubcommand(NodesAdminHelpCommand())
@@ -52,13 +49,9 @@ class NodesAdminCommand : Command("nodesadmin", "nda") {
         addSubcommand(NodesAdminNationCommand())
         addSubcommand(NodesAdminPortCommand())
         addSubcommand(NodesAdminPortGroupCommand())
-//        addSubcommand(NodesAdminEnemyCommand())
-//        addSubcommand(NodesAdminAllyCommand())
-//        addSubcommand(NodesAdminAllyRemoveCommand())
-//        addSubcommand(NodesAdminSaveCommand())
-//        addSubcommand(NodesAdminLoadCommand())
-//        addSubcommand(NodesAdminRunIncomeCommand())
-//        addSubcommand(NodesAdminDebugCommand())
+        addSubcommand(NodesAdminSaveCommand())
+        addSubcommand(NodesAdminLoadCommand())
+        addSubcommand(NodesAdminRunIncomeCommand())
     }
 }
 
@@ -71,9 +64,6 @@ class NodesAdminHelpCommand() : Command("help") {
             Message.print(sender, "/nodesadmin nation${ChatColor.WHITE}: Manage nations (see \"/nodesadmin nation help\")")
             Message.print(sender, "/nodesadmin port${ChatColor.WHITE}: Manage ports (see \"/nodesadmin port help\")")
             Message.print(sender, "/nodesadmin portgroup${ChatColor.WHITE}: Manage port groups (see \"/nodesadmin portgroup help\")")
-            Message.print(sender, "/nodesadmin enemy${ChatColor.WHITE}: Make two towns/nations enemies")
-            Message.print(sender, "/nodesadmin ally${ChatColor.WHITE}: Sets alliance between two towns/nations")
-            Message.print(sender, "/nodesadmin allyremove${ChatColor.WHITE}: Removes alliance between two towns/nations")
             Message.print(sender, "/nodesadmin save${ChatColor.WHITE}: Force save world")
             Message.print(sender, "/nodesadmin load${ChatColor.WHITE}: Force load world")
             Message.print(sender, "/nodesadmin runincome${ChatColor.WHITE}: Runs income for all towns")
@@ -529,6 +519,10 @@ class NodesAdminNationCommand() : Command("nation") {
             Message.print(sender, "/nodesadmin nation delete${ChatColor.WHITE}: Delete existing nation")
             Message.print(sender, "/nodesadmin nation addtown${ChatColor.WHITE}: Add towns to nation")
             Message.print(sender, "/nodesadmin nation removetown${ChatColor.WHITE}: Remove towns from nation")
+            Message.print(sender, "/nodesadmin nation addally${ChatColor.WHITE}: Add ally to nation")
+            Message.print(sender, "/nodesadmin nation removeally${ChatColor.WHITE}: Remove ally from a nation")
+            Message.print(sender, "/nodesadmin nation addenemy${ChatColor.WHITE}: Add enemy to nation")
+            Message.print(sender, "/nodesadmin nation removeenemy${ChatColor.WHITE}: Remove enemy from a nation")
             Message.print(sender, "/nodesadmin nation capital${ChatColor.WHITE}: Set nation's capital town")
             Message.print(sender, "Run a command with no args to see usage.")
         }
@@ -537,6 +531,10 @@ class NodesAdminNationCommand() : Command("nation") {
         addSubcommand(NodesAdminNationDeleteCommand())
         addSubcommand(NodesAdminNationAddTownCommand())
         addSubcommand(NodesAdminNationRemoveTownCommand())
+        addSubcommand(NodesAdminNationAddAllyCommand())
+        addSubcommand(NodesAdminNationRemoveAllyCommand())
+        addSubcommand(NodesAdminNationAddEnemyCommand())
+        addSubcommand(NodesAdminNationRemoveEnemyCommand())
         addSubcommand(NodesAdminNationCapitalCommand())
     }
 }
@@ -649,6 +647,86 @@ class NodesAdminNationCapitalCommand() : Command("capital") {
 
             Message.print(player, "${context[townArg].name} is now the capital of ${context[nationArg].name}")
         }, nationArg, townArg)
+    }
+}
+
+class NodesAdminNationAddAllyCommand() : Command("addally") {
+    init {
+        setDefaultExecutor { sender, context ->
+            Message.print(sender, "Usage: /nodesadmin nation addally <nationA-name> <nationB-name>")
+        }
+
+        val nationAArg = ArgumentNation.create("nationA-name")
+        val nationBArg = ArgumentNation.create("nationB-name")
+
+        addSyntax( {player, resident, context ->
+            Nodes.addAlly(context[nationAArg], context[nationBArg]).getOrElse({ err ->
+                Message.error(player, "Failed to add ally: ${err.message}")
+                return@addSyntax
+            })
+
+            Message.print(player, "Added ${context[nationBArg].name} as ally of ${context[nationAArg].name}")
+        }, nationAArg, nationBArg)
+    }
+}
+
+class NodesAdminNationRemoveAllyCommand() : Command("removeally") {
+    init {
+        setDefaultExecutor { sender, context ->
+            Message.print(sender, "Usage: /nodesadmin nation removeally <nationA-name> <nationB-name>")
+        }
+
+        val nationAArg = ArgumentNation.create("nationA-name")
+        val nationBArg = ArgumentNation.create("nationB-name")
+
+        addSyntax( {player, resident, context ->
+            Nodes.removeAlly(context[nationAArg], context[nationBArg]).getOrElse({ err ->
+                Message.error(player, "Failed to remove ally: ${err.message}")
+                return@addSyntax
+            })
+
+            Message.print(player, "Removed ${context[nationBArg].name} as ally of ${context[nationAArg].name}")
+        }, nationAArg, nationBArg)
+    }
+}
+
+class NodesAdminNationAddEnemyCommand() : Command("addenemy") {
+    init {
+        setDefaultExecutor { sender, context ->
+            Message.print(sender, "Usage: /nodesadmin nation addenemy <nationA-name> <nationB-name>")
+        }
+
+        val nationAArg = ArgumentNation.create("nationA-name")
+        val nationBArg = ArgumentNation.create("nationB-name")
+
+        addSyntax( {player, resident, context ->
+            Nodes.addEnemy(context[nationAArg], context[nationBArg]).getOrElse({ err ->
+                Message.error(player, "Failed to add enemy: ${err.message}")
+                return@addSyntax
+            })
+
+            Message.print(player, "Added ${context[nationBArg].name} as enemy of ${context[nationAArg].name}")
+        }, nationAArg, nationBArg)
+    }
+}
+
+class NodesAdminNationRemoveEnemyCommand() : Command("removeenemy") {
+    init {
+        setDefaultExecutor { sender, context ->
+            Message.print(sender, "Usage: /nodesadmin nation removeenemy <nationA-name> <nationB-name>")
+        }
+
+        val nationAArg = ArgumentNation.create("nationA-name")
+        val nationBArg = ArgumentNation.create("nationB-name")
+
+        addSyntax( {player, resident, context ->
+            Nodes.removeEnemy(context[nationAArg], context[nationBArg]).getOrElse({ err ->
+                Message.error(player, "Failed to remove enemy: ${err.message}")
+                return@addSyntax
+            })
+
+            Message.print(player, "Removed ${context[nationBArg].name} as enemy of ${context[nationAArg].name}")
+        }, nationAArg, nationBArg)
     }
 }
 
@@ -812,5 +890,58 @@ class NodesAdminPortGroupRemovePortCommand() : Command("removeport") {
                 Message.print(player, "Removed port \"${port.name}\" from group \"${context[portGroupArg].name}\"")
             }
         }, portGroupArg, portsArg)
+    }
+}
+
+class NodesAdminSaveCommand() : Command("save") {
+    init {
+        setDefaultExecutor { sender, context ->
+            Message.print(sender, "Usage:")
+            Message.print(sender, "/nodesadmin save")
+            Message.print(sender, "/nodesadmin save <sync>")
+        }
+
+        val syncArg = ArgumentType.Boolean("sync")
+
+        addSyntax({ player, resident, context ->
+            Message.print(player, "[Nodes] Saving world (async)")
+            Nodes.saveWorld(checkIfNeedsSave = false, async = true)
+        })
+
+        addSyntax( { player, resident, context ->
+            if(context[syncArg]) {
+                Message.print(player, "[Nodes] Saving world (sync)")
+                Nodes.saveWorld(checkIfNeedsSave = false, async = false)
+            } else {
+                Message.print(player, "[Nodes] Saving world (async)")
+                Nodes.saveWorld(checkIfNeedsSave = false, async = true)
+            }
+        }, syncArg)
+    }
+}
+
+class NodesAdminLoadCommand() : Command("load") {
+    init {
+        setDefaultExecutor { sender, context ->
+            Message.print(sender, "Usage: /nodesadmin load")
+        }
+
+        addSyntax( { player, resident, context ->
+            Message.print(player, "[Nodes] Loading world")
+            Nodes.loadWorld()
+        })
+    }
+}
+
+class NodesAdminRunIncomeCommand() : Command("runincome") {
+    init {
+        setDefaultExecutor { sender, context ->
+            Message.print(sender, "Usage: /nodesadmin runincome")
+        }
+
+        addSyntax( { player, resident, context ->
+            Message.print(player, "Running incomes for all towns")
+            Nodes.runIncome()
+        })
     }
 }
