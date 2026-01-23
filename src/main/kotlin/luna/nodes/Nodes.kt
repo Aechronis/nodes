@@ -29,6 +29,7 @@ import luna.nodes.commands.GlobalChatCommand
 import luna.nodes.commands.NationChatCommand
 import luna.nodes.commands.NodesAdminCommand
 import luna.nodes.commands.PlayerCommand
+import luna.nodes.commands.TerritoryCommand
 import luna.nodes.commands.TownChatCommand
 import luna.nodes.constants.DiplomaticRelationship
 import luna.nodes.constants.ErrorAlreadyAllies
@@ -222,7 +223,7 @@ object Nodes {
         MinecraftServer.getCommandManager().register(NationChatCommand())
         MinecraftServer.getCommandManager().register(AllyChatCommand())
         MinecraftServer.getCommandManager().register(PlayerCommand())
-//    this.getCommand("territory")?.setExecutor(TerritoryCommand())
+        MinecraftServer.getCommandManager().register(TerritoryCommand())
 //    this.getCommand("port")?.setExecutor(PortCommand())
 
         // load current income tick
