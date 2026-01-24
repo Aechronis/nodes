@@ -29,6 +29,7 @@ import luna.nodes.commands.GlobalChatCommand
 import luna.nodes.commands.NationChatCommand
 import luna.nodes.commands.NodesAdminCommand
 import luna.nodes.commands.PlayerCommand
+import luna.nodes.commands.PortCommand
 import luna.nodes.commands.TerritoryCommand
 import luna.nodes.commands.TownChatCommand
 import luna.nodes.constants.DiplomaticRelationship
@@ -101,6 +102,7 @@ import net.minestom.server.event.player.PlayerChatEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerLoadedEvent
 import net.minestom.server.event.player.PlayerMoveEvent
+import net.minestom.server.timer.Task
 import java.nio.file.Files
 //import java.nio.file.Path
 //import java.nio.file.Paths
@@ -140,9 +142,9 @@ object Nodes {
     // ports system
     internal val ports: LinkedHashMap<String, Port> = LinkedHashMap()
     internal val portGroups: LinkedHashMap<String, PortGroup> = LinkedHashMap()
-//
-//    // map of player -> task for warping
-//    public var playerWarpTasks: HashMap<UUID, ScheduledTask> = hashMapOf()
+
+    // map of player -> task for warping
+    var playerWarpTasks: HashMap<Player, Task> = hashMapOf()
 
     // map chunk coords -> port, assumes one chunk only has 1 port
     var chunkToPort: HashMap<List<Int>, Port> = hashMapOf()
@@ -224,7 +226,7 @@ object Nodes {
         MinecraftServer.getCommandManager().register(AllyChatCommand())
         MinecraftServer.getCommandManager().register(PlayerCommand())
         MinecraftServer.getCommandManager().register(TerritoryCommand())
-//    this.getCommand("port")?.setExecutor(PortCommand())
+        MinecraftServer.getCommandManager().register(PortCommand())
 
         // load current income tick
         val currTime = System.currentTimeMillis()
@@ -2594,32 +2596,32 @@ fun getPortGroupFromName(name: String): PortGroup? = portGroups.get(name)
         Nodes.needsSave = true
     }
 
-//    /**
-//     * Get port owner based on who owns chunk
-//     * If no owner or if port is public, return null
-//     * If chunk is occupied, return occupier
-//     * Else, return territory town (may be null)
-//     */
-//    public fun getPortOwner(port: Port): Town? {
-//        if (port.isPublic) {
-//            return null
-//        }
-//
-//        val chunk = getTerritoryChunkFromCoord(Coord(port.chunkX, port.chunkZ))
-//        if (chunk === null) {
-//            return null
-//        }
-//
-//        val occupier = chunk.occupier
-//        if (occupier !== null) {
-//            return occupier
-//        }
-//
-//        return chunk.territory.town
-//    }
-//
-//    /**
-//     * Check if two ports share a group
-//     */
-//    fun sharePortGroups(port1: Port, port2: Port): Boolean = port1.groups.any { it in port2.groups }
+    /**
+     * Get port owner based on who owns chunk
+     * If no owner or if port is public, return null
+     * If chunk is occupied, return occupier
+     * Else, return territory town (may be null)
+     */
+    public fun getPortOwner(port: Port): Town? {
+        if (port.isPublic) {
+            return null
+        }
+
+        val chunk = getTerritoryChunkFromCoord(Coord(port.chunkX, port.chunkZ))
+        if (chunk === null) {
+            return null
+        }
+
+        val occupier = chunk.occupier
+        if (occupier !== null) {
+            return occupier
+        }
+
+        return chunk.territory.town
+    }
+
+    /**
+     * Check if two ports share a group
+     */
+    fun sharePortGroups(port1: Port, port2: Port): Boolean = port1.groups.any { it in port2.groups }
 }
