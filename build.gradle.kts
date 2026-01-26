@@ -5,9 +5,15 @@ plugins {
     `maven-publish`
     id("org.jetbrains.kotlin.jvm") version "2.3.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("dev.detekt") version "2.0.0-alpha.1"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+// detekt doesn't yet support java 25, so we must force jvm to 24 for its task
+tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+    jvmTarget = "24"
+}
 
 repositories {
     mavenCentral()
