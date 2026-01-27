@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
     id("org.jetbrains.kotlin.jvm") version "2.3.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
-    id("dev.detekt") version "2.0.0-alpha.1"
+    id("dev.detekt") version "2.0.0-alpha.2"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
